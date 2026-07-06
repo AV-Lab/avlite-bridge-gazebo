@@ -5,7 +5,7 @@ from typing import Optional
 import numpy as np
 
 from avlite.c40_execution.c41_world_bridge import WorldBridge
-from avlite.c60_common.c61_capabilities import WorldCapability
+from avlite.c50_common.c51_capabilities import StackCapability, WorldCapability
 from avlite.c10_perception.c11_perception_model import EgoState, AgentState
 from avlite.c30_control.c31_control_model import ControlCommand
 from avlite.c30_control.c32_control_strategy import ControlStrategy
@@ -25,12 +25,17 @@ except ImportError:
 
 class GazeboIgnitionBridge(WorldBridge, Node if ROS_AVAILABLE else object):
     @property
-    def capabilities(self) -> set[WorldCapability]:
+    def world_capabilities(self) -> set[WorldCapability]:
         return {
-            WorldCapability.GT_DETECTION,
-            WorldCapability.GT_LOCALIZATION,
             WorldCapability.CAMERA_RGB,
-            WorldCapability.LIDAR_3D
+            WorldCapability.LIDAR_3D,
+        }
+
+    @property
+    def stack_capabilities(self) -> set[StackCapability]:
+        return {
+            StackCapability.DETECTION,
+            StackCapability.LOCALIZATION,
         }
     def __init__(self, ego_state: Optional[EgoState], model_name: str = "gen0_model", world_name: str = "default", controller: Optional[ControlStrategy] = None, reference_point: tuple[float, float] | None = None):
         self.reference_point = reference_point
